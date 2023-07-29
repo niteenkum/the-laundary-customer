@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "308281294245",
+    "project_id": "the-laundry-machine-14f73",
+    "storage_bucket": "the-laundry-machine-14f73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:308281294245:android:e60200fcd06e43d0917c4c",
+        "android_client_info": {
+          "package_name": "com.thelaundrymachine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "308281294245-55i5l2fotrrrqaa070jkc3ec4jbnpksv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7hgOjeyfZzkVadJzmyZBpKER_lYepRj4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "308281294245-55i5l2fotrrrqaa070jkc3ec4jbnpksv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
