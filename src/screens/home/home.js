@@ -49,6 +49,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {STORAGES} from '../../res/ConstVariable';
 import { setAsyncStorage, getAsyncStorage } from '../../utils/asyncStorage';
 import crashlytics from '@react-native-firebase/crashlytics';
+import { ServiceHourContext } from '../../../App';
 const rattingList = [
   {
     name: `Aatreya`,
@@ -191,6 +192,9 @@ class Home extends Component {
     };
   };
 
+  static contextType = ServiceHourContext;
+
+
   constructor(props) {
     // this.getUserToken().then(res => this.setState({userToken: res}));
     super(props);
@@ -205,6 +209,7 @@ class Home extends Component {
       selectId: [],
       userToken: false,
       selectedService: [],
+      selectedHours: [],
       region: {},
       page: 1,
     };
@@ -287,8 +292,8 @@ class Home extends Component {
     }
   }
 
-  selectedItem = (id, name) => {
-    const {selectId, selectedService} = this.state;
+  selectedItem = (id, name, hour) => {
+    const {selectId, selectedService, selectedHours} = this.state;
 
     if (selectId.includes(id)) {
       const newid = selectId.filter(listItem => listItem !== id);
@@ -297,11 +302,16 @@ class Home extends Component {
         listItem => listItem.id !== id,
       );
 
-      return this.setState({selectId: newid, selectedService: selectedItems});
+      const filteredHour = selectedHours.filter(
+        listItem => listItem.id !== id
+      )
+
+      return this.setState({selectId: newid, selectedService: selectedItems, selectedHours: filteredHour});
     }
     selectId.push(id);
     selectedService.push({id, name});
-    this.setState({selectId, selectedService});
+    selectedHours.push({id,name,hour});
+    this.setState({selectId, selectedService, selectedHours});
   };
 
   onChnageCate = (item, index = 0) => {
@@ -331,6 +341,9 @@ class Home extends Component {
   };
 
   render() {
+
+    const { setTotalHours } = this.context;
+
     const {
       Promocodes = [],
       loading,
@@ -351,6 +364,17 @@ class Home extends Component {
       otpdata.data,
       '...................>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>',
     );
+
+    const handleIncrement = () => {
+      // console.log("Total hhour",totalHours)
+      // if(totalHours < hour)
+      // setTotalHours(hour);
+    const {selectedHours} = this.state;
+    const maxHourObject = selectedHours.reduce((max, current) => (current.hour > max.hour ? current : max));
+    setTotalHours(maxHourObject.hour)
+    };
+
+
     return (
       <Background bodyStyle={{backgroundColor: colors.white}}>
         <LocationCard
@@ -437,7 +461,11 @@ class Home extends Component {
                   style={styles.onSelect(
                     this.state.selectId.indexOf(index) >= 0,
                   )}
-                  onPress={() => this.selectedItem(index, item.name)}>
+                  onPress={() => {
+                    console.log("function clllleleleld")
+                    // handleIncrement(item?.hours)
+                    this.selectedItem(index, item.name, item?.hours)
+                    }}>
                   <ServiceCard
                     index={index}
                     //onSelectIm={onSelectIm}
@@ -467,11 +495,15 @@ class Home extends Component {
                   alignItems: 'center',
                 }}
                 onPress={() =>
-                  this.state.userToken
+                  {
+                    handleIncrement();
+                    this.state.userToken
                     ? this.props.navigation.navigate('ServiceDetails', {
                         ServiceId: this.state.selectedService,
                       })
                     : this.props.navigation.navigate('Otp')
+                  }
+
                 }>
                 <Text
                   style={{
