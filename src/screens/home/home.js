@@ -192,7 +192,6 @@ class Home extends Component {
     };
   };
 
-  static contextType = ServiceHourContext;
 
 
   constructor(props) {
@@ -340,9 +339,13 @@ class Home extends Component {
     );
   };
 
+  static contextType = ServiceHourContext;
+  
+
   render() {
 
-    const { setTotalHours } = this.context;
+    // const { totalHours,setTotalHours } = this.context;
+    
 
     const {
       Promocodes = [],
@@ -369,9 +372,13 @@ class Home extends Component {
       // console.log("Total hhour",totalHours)
       // if(totalHours < hour)
       // setTotalHours(hour);
+    const { totalHours,setTotalHours } = this.context;
     const {selectedHours} = this.state;
-    const maxHourObject = selectedHours.reduce((max, current) => (current.hour > max.hour ? current : max));
-    setTotalHours(maxHourObject.hour)
+      console.log("Totalalalal", selectedHours);
+    const maxHourObject = selectedHours?.reduce((max, current) => (current?.hour > max?.hour ? current : max));
+    console.log("Max hour", maxHourObject?.hour)
+    // setTotalHours ?  setTotalHours(maxHourObject?.hour) : console.log("Not sett")
+    setTotalHours(maxHourObject?.hour);
     };
 
 
@@ -472,7 +479,7 @@ class Home extends Component {
                     cardstyle={styles.onSelectIm(
                       this.state.selectId.indexOf(index) >= 0,
                     )}
-                    title={item.name}
+                    title={item.name + item?.hours}
                     style={styles.Texstyle(
                       this.state.selectId.indexOf(index) >= 0,
                     )}
