@@ -24,6 +24,7 @@ import {DateTimeCard} from '../components/dateTimeCard';
 import AuthBackground from '../../../components/background/Authbackground';
 import Background from '../../../components/background';
 import moment from 'moment';
+import {ServiceHourContext} from '../../../../App';
 class ScheduleDateTime extends Component {
   static navigationOptions = ({navigation}) => {
     let headerTitle = ' ';
@@ -33,6 +34,9 @@ class ScheduleDateTime extends Component {
       headerTitle,
     };
   };
+
+  static contextType = ServiceHourContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -61,8 +65,15 @@ class ScheduleDateTime extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { timeSlot, dateSlot, distanceDays = 4, loading } = nextProps;
-    console.log(distanceDays,"distanceDays????????????????????????????")
+    const {timeSlot, dateSlot, distanceDays = 4, loading} = nextProps;
+    const {totalHours} = this.context;
+
+    const hoursToDays = hours => {
+      const days = hours / 24;
+      return Math.round(days);
+    };
+    let minDiff = hoursToDays(totalHours);
+
     let sentinel = '';
     try {
       selectedItems.name.map((t, index) => {
@@ -80,11 +91,10 @@ class ScheduleDateTime extends Component {
           {
             pickup: dateSlot[0],
             delivery:
-              dateSlot[
-                sentinel == 'Dry Clean' ? distanceDays + 2 : distanceDays+1
-              ],
-            deliveryIndex:
-              sentinel == 'Dry Clean' ? distanceDays + 2 : distanceDays+1,
+              // sentinel == 'Dry Clean' ? distanceDays + 2 : distanceDays+1
+              dateSlot[minDiff],
+            deliveryIndex: minDiff,
+            // sentinel == 'Dry Clean' ? distanceDays + 2 : distanceDays+1,
           },
           // () => this.onScollNext(2),
         );
@@ -131,6 +141,10 @@ class ScheduleDateTime extends Component {
   };
 
   renderTime = (item, key, MainKey) => {
+    // console.log(this.state.pickupTime.split("-")[0])
+    // console.log(moment(this.state.pickupTime.split("-")[0], 'hh:mm A').format('HH'));
+    // console.log(moment(this.state.deliveryTime.split("-")[0], 'hh:mm A').format('HH'));
+
     const {deliveryTime, pickupTime, delivery, pickup} = this.state;
     const {timeSlot = []} = this.props;
     let times = [];
@@ -152,12 +166,31 @@ class ScheduleDateTime extends Component {
     const current = new Date().getHours();
     const slots_show = moment(item.start_time, ['h:mm A']).format('HH');
 
+    console.log(
+      moment(this.state.pickupTime.split('-')[0], 'hh:mm A').format('HH') +
+        'jnnkjk' +
+        moment(this.state.deliveryTime.split('-')[0], 'hh:mm A').format('HH'),
+    );
+
     return (
       // time slots rendering according to current date time and pickup time
       key === 'deliveryTime' ? (
         <TouchableRipple
           rippleContainerBorderRadius={5}
-          onPress={() => this.setState({[key]: item.slots})}
+          onPress={() => {
+            if (
+              moment(this.state.pickupTime.split('-')[0], 'hh:mm A').format(
+                'HH',
+              ) -
+                moment(item.slots.split('-')[0], 'hh:mm A').format('HH') >
+              0
+            ) {
+              global.Toaster('Delivery Time not  available');
+              return;
+            } else {
+              this.setState({[key]: item.slots});
+            }
+          }}
           style={[
             styles.timeCell,
             this.state[key] == item.slots ? styles.selectedBorder : {},
@@ -167,7 +200,10 @@ class ScheduleDateTime extends Component {
       ) : key == 'pickupTime' && current + 1 < slots_show ? (
         <TouchableRipple
           rippleContainerBorderRadius={5}
-          onPress={() => this.setState({[key]: item.slots})}
+          onPress={() => {
+            this.setState({deliveryTime: ''});
+            this.setState({[key]: item.slots});
+          }}
           style={[
             styles.timeCell,
             this.state[key] == item.slots ? styles.selectedBorder : {},
@@ -177,7 +213,10 @@ class ScheduleDateTime extends Component {
       ) : today != date ? (
         <TouchableRipple
           rippleContainerBorderRadius={5}
-          onPress={() => this.setState({[key]: item.slots})}
+          onPress={() => {
+            this.setState({deliveryTime: ''});
+            this.setState({[key]: item.slots});
+          }}
           style={[
             styles.timeCell,
             this.state[key] == item.slots ? styles.selectedBorder : {},
@@ -189,6 +228,7 @@ class ScheduleDateTime extends Component {
   };
 
   renderDateItem = (item, MainKey, index) => {
+    const {totalHours} = this.context;
     const selected = this.state[MainKey] || {};
     const {dateSlot = [], distanceDays = 3} = this.props;
     const {pickupIndex, deliveryIndex} = this.state;
@@ -208,7 +248,15 @@ class ScheduleDateTime extends Component {
     // console.log(index, '........................index');
     const {date = '', day = ''} = item;
 
+    const hoursToDays = hours => {
+      const days = hours / 24;
+      // const hours = hours % 24;
+      return Math.round(days);
+    };
+
     const onCkeck = () => {
+      // console.log("Total",totalHours);
+      let minDiff = hoursToDays(totalHours);
       let sentinel = '';
       try {
         selectedItems.name.map((t, index) => {
@@ -224,31 +272,39 @@ class ScheduleDateTime extends Component {
       if (MainKey === KEYS[0]) {
         this.setState({
           pickup: dateSlot[index],
-          deliveryIndex:
-            sentinel == 'Dry Clean' ? distanceDays + 2: distanceDays+1,
-          delivery:
-            sentinel == 'Dry Clean'
-              ? dateSlot[index + distanceDays + 2]
-              : dateSlot[index + distanceDays+1],
+          deliveryIndex: minDiff,
+          // sentinel == 'Dry Clean' ? distanceDays + 2: distanceDays+1,
+          delivery: dateSlot[index + minDiff],
+          // sentinel == 'Dry Clean'
+          // ? dateSlot[index + distanceDays + 2]
+          // : dateSlot[index + distanceDays+1],
           pickupIndex: index,
-           
         });
       } else {
         if (MainKey === KEYS[1]) {
           const dd = distanceDays;
 
-          if (
-            index < this.state.pickupIndex + dd + 2 &&
-            sentinel == 'Dry Clean'
-          ) {
+          // if (
+          //   index < this.state.pickupIndex + 1 + minDiff &&
+          //   sentinel == 'Dry Clean'
+          // ) {
+          //   global.Toaster('Delivery day not  available');
+          // } else if (index < pickupIndex+dd+1) {
+          //    global.Toaster('Delivery day not available');
+          // } else
+          //   this.setState({
+          //     [MainKey]: item,
+          //     deliveryIndex: index ,
+          //   });
+          console.log(index, this.state.pickupIndex + minDiff, minDiff);
+          if (index < minDiff) {
             global.Toaster('Delivery day not  available');
-          } else if (index < pickupIndex+dd+1) {
-             global.Toaster('Delivery day not available');
-          } else 
+          } else {
             this.setState({
               [MainKey]: item,
-              deliveryIndex: index ,
+              deliveryIndex: index,
             });
+          }
         } else if (pickupIndex < deliveryIndex) {
           this.handlePosition(deliveryIndex);
           console.log(
@@ -260,7 +316,8 @@ class ScheduleDateTime extends Component {
           );
         }
       }
-     
+
+      this.setState({deliveryTime: ''});
     };
 
     return (
@@ -383,6 +440,7 @@ class ScheduleDateTime extends Component {
   render() {
     const {timeSlot = [], dateSlot = [], loading, LngCode} = this.props;
     const {pickup, delivery, note} = this.state;
+    const {totalHours} = this.context;
     // let time = this.getCurrentTime();
 
     console.log(delivery, 'mmmmmmmddddddddddd');
@@ -413,7 +471,9 @@ class ScheduleDateTime extends Component {
           }
         />
         <DateTimeCard
-          title={LngCode.DELIVERY_DATE_LABEL}
+          title={
+            LngCode.DELIVERY_DATE_LABEL + '-----' + Math.round(totalHours / 24)
+          }
           loading={loading}
           timeSlotTitle={LngCode.DELIVERY_TIME_LABEL}
           renderSelected={delivery.date}
