@@ -70,7 +70,7 @@ class ScheduleDateTime extends Component {
 
     const hoursToDays = hours => {
       const days = hours / 24;
-      return Math.round(days);
+      return Math.floor(days);
     };
     let minDiff = hoursToDays(totalHours);
 
@@ -145,6 +145,7 @@ class ScheduleDateTime extends Component {
     // console.log(moment(this.state.pickupTime.split("-")[0], 'hh:mm A').format('HH'));
     // console.log(moment(this.state.deliveryTime.split("-")[0], 'hh:mm A').format('HH'));
 
+    const {totalHours} = this.context;
     const {deliveryTime, pickupTime, delivery, pickup} = this.state;
     const {timeSlot = []} = this.props;
     let times = [];
@@ -165,12 +166,8 @@ class ScheduleDateTime extends Component {
     let today = new Date().toDateString();
     const current = new Date().getHours();
     const slots_show = moment(item.start_time, ['h:mm A']).format('HH');
-
-    console.log(
-      moment(this.state.pickupTime.split('-')[0], 'hh:mm A').format('HH') +
-        'jnnkjk' +
-        moment(this.state.deliveryTime.split('-')[0], 'hh:mm A').format('HH'),
-    );
+    let minDiff = Math.floor(totalHours /24);
+    let hourDiff = totalHours % 24
 
     return (
       // time slots rendering according to current date time and pickup time
@@ -178,11 +175,18 @@ class ScheduleDateTime extends Component {
         <TouchableRipple
           rippleContainerBorderRadius={5}
           onPress={() => {
+            console.log(((   Number(moment(this.state.pickupTime.split('-')[0], 'hh:mm A').format(
+              'HH',
+            ))) + hourDiff) -
+              moment(item.slots.split('-')[0], 'hh:mm A').format('HH') > 0)
+
+              console.log(minDiff == this.state.deliveryIndex )
             if (
-              moment(this.state.pickupTime.split('-')[0], 'hh:mm A').format(
-                'HH',
-              ) -
-                moment(item.slots.split('-')[0], 'hh:mm A').format('HH') >
+             minDiff == this.state.deliveryIndex && (
+           (  ( Number(moment(this.state.pickupTime.split('-')[0], 'hh:mm A').format(
+            'HH',
+          ))) + hourDiff) -
+                moment(item.slots.split('-')[0], 'hh:mm A').format('HH')) >
               0
             ) {
               global.Toaster('Delivery Time not  available');
@@ -251,7 +255,7 @@ class ScheduleDateTime extends Component {
     const hoursToDays = hours => {
       const days = hours / 24;
       // const hours = hours % 24;
-      return Math.round(days);
+      return Math.floor(days);
     };
 
     const onCkeck = () => {
@@ -472,7 +476,7 @@ class ScheduleDateTime extends Component {
         />
         <DateTimeCard
           title={
-            LngCode.DELIVERY_DATE_LABEL + '-----' + Math.round(totalHours / 24)
+            LngCode.DELIVERY_DATE_LABEL + '-----' + Math.floor(totalHours / 24)
           }
           loading={loading}
           timeSlotTitle={LngCode.DELIVERY_TIME_LABEL}

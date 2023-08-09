@@ -357,12 +357,17 @@ class OrderDetail extends Component {
             </Card>
           ) : null}
            {/* <TextBox type="caption2" >{status}</TextBox>  */}
-           {status!==0 &&status!==7&& price && payment_status !== "sucess"? 
+           {/* {status!==0 &&status!==7&& price && payment_status !== "sucess"? 
             <Transection id={`${id}${Math.floor(Date.now() / 1000)}`} order_id={id} user_id={user_id}
               price={total_price}
               // price={price - (price * promotion?.discount_value / 100) + (price * tax_percentage / 100)}
             /> 
-           : null} 
+           : null}  */}
+
+<Transection id={`${id}${Math.floor(Date.now() / 1000)}`} order_id={id} user_id={user_id}
+              price={total_price}
+              // price={price - (price * promotion?.discount_value / 100) + (price * tax_percentage / 100)}
+            /> 
              
         </ScrollView>
       </SafeAreaView>
