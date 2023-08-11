@@ -209,6 +209,7 @@ class Home extends Component {
       userToken: false,
       selectedService: [],
       selectedHours: [],
+      totalHours: "",
       region: {},
       page: 1,
     };
@@ -368,20 +369,20 @@ class Home extends Component {
       '...................>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>',
     );
 
-    const handleIncrement = () => {
+    const handleIncrement = async () => {
       // console.log("Total hhour",totalHours)
       // if(totalHours < hour)
       // setTotalHours(hour);
-    const { totalHours,setTotalHours } = this.context;
+    // const { totalHours,setTotalHours } = this.context;
     const {selectedHours} = this.state;
-      console.log("Totalalalal", selectedHours);
     const maxHourObject = selectedHours?.reduce((max, current) => (current?.hour > max?.hour ? current : max));
     console.log("Max hour", maxHourObject?.hour)
     // setTotalHours ?  setTotalHours(maxHourObject?.hour) : console.log("Not sett")
-    setTotalHours(maxHourObject?.hour);
+    // setTotalHours(maxHourObject?.hour);
+    await setAsyncStorage("totalHours", maxHourObject?.hour)
     };
 
-
+ 
     return (
       <Background bodyStyle={{backgroundColor: colors.white}}>
         <LocationCard

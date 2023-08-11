@@ -49,8 +49,11 @@ class ScheduleDateTime extends Component {
       note: '',
       keyHeigth: 0,
       time: '',
+     totalHours: 0
+
     };
     this.setHeaderTitle();
+    this.setTotalHours();
   }
   setHeaderTitle = () => {
     const {LngCode} = this.props;
@@ -59,6 +62,13 @@ class ScheduleDateTime extends Component {
     });
   };
 
+  setTotalHours = async () => {
+    let tH = await AsyncStorage.getItem("totalHours");
+    this.setState({
+      totalHours: tH
+    })
+  }
+
   componentDidMount() {
     this.props.getTimeSlot();
     // this.getServicesName();
@@ -66,7 +76,8 @@ class ScheduleDateTime extends Component {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {timeSlot, dateSlot, distanceDays = 4, loading} = nextProps;
-    const {totalHours} = this.context;
+    // const {totalHours} = this.context;
+    let totalHours = this.state.totalHours;
 
     const hoursToDays = hours => {
       const days = hours / 24;
@@ -145,7 +156,8 @@ class ScheduleDateTime extends Component {
     // console.log(moment(this.state.pickupTime.split("-")[0], 'hh:mm A').format('HH'));
     // console.log(moment(this.state.deliveryTime.split("-")[0], 'hh:mm A').format('HH'));
 
-    const {totalHours} = this.context;
+    // const {totalHours} = this.context;
+    let totalHours = this.state.totalHours;
     const {deliveryTime, pickupTime, delivery, pickup} = this.state;
     const {timeSlot = []} = this.props;
     let times = [];
@@ -231,8 +243,9 @@ class ScheduleDateTime extends Component {
     );
   };
 
-  renderDateItem = (item, MainKey, index) => {
-    const {totalHours} = this.context;
+  renderDateItem = async (item, MainKey, index) => {
+    // const {totalHours} = this.context;
+    let totalHours = this.state.totalHours;
     const selected = this.state[MainKey] || {};
     const {dateSlot = [], distanceDays = 3} = this.props;
     const {pickupIndex, deliveryIndex} = this.state;
@@ -444,7 +457,8 @@ class ScheduleDateTime extends Component {
   render() {
     const {timeSlot = [], dateSlot = [], loading, LngCode} = this.props;
     const {pickup, delivery, note} = this.state;
-    const {totalHours} = this.context;
+    // const {totalHours} = this.context;
+    let totalHours = this.state.totalHours;
     // let time = this.getCurrentTime();
 
     console.log(delivery, 'mmmmmmmddddddddddd');
