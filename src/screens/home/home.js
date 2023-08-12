@@ -49,7 +49,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {STORAGES} from '../../res/ConstVariable';
 import { setAsyncStorage, getAsyncStorage } from '../../utils/asyncStorage';
 import crashlytics from '@react-native-firebase/crashlytics';
-import { ServiceHourContext } from '../../../App';
 const rattingList = [
   {
     name: `Aatreya`,
@@ -340,12 +339,8 @@ class Home extends Component {
     );
   };
 
-  static contextType = ServiceHourContext;
-  
-
   render() {
 
-    // const { totalHours,setTotalHours } = this.context;
     
 
     const {
@@ -373,7 +368,6 @@ class Home extends Component {
       // console.log("Total hhour",totalHours)
       // if(totalHours < hour)
       // setTotalHours(hour);
-    // const { totalHours,setTotalHours } = this.context;
     const {selectedHours} = this.state;
     const maxHourObject = selectedHours?.reduce((max, current) => (current?.hour > max?.hour ? current : max));
     console.log("Max hour", maxHourObject?.hour)

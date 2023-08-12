@@ -9,7 +9,6 @@ import CustomToast from './src/components/customToast';
 import {NotificationController} from './src/utils/notificationController';
 import {fcmService} from './src/utils/FCMServices';
 import {localNotificationService} from './src/utils/LocalNotificationService';
-import { createContext, useState } from 'react';
 
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false; // stop allowFontScaling
@@ -18,13 +17,7 @@ TextInput.defaultProps.allowFontScaling = false; // stop allowFontScaling
 console.disableYellowBox = true;
 
 
-export const ServiceHourContext = createContext({
-  totalHours: 0,
-  setTotalHours: () => {}
-});
-
 const App = () => {
-  const [totalHours, setTotalHours] = useState(0);
   const toastRef = useRef(null);
   global.servicesname = 'dry clranning';
   useEffect(() => {
@@ -89,17 +82,10 @@ const App = () => {
 
   return [
     <Provider store={store}>
-          <ServiceHourContext.Provider
-            value={
-             { totalHours,
-              setTotalHours}
-            }
-          >
       <StatusBar backgroundColor={colors.white} barStyle="dark-content" />
       <RootNavigation />
       <NotificationController />
       <CustomToast ref={ref => (toastRef.current = ref)} position="bottom" />
-      </ServiceHourContext.Provider>
     </Provider>,
   ];
 };

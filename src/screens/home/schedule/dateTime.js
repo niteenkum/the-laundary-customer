@@ -24,7 +24,6 @@ import {DateTimeCard} from '../components/dateTimeCard';
 import AuthBackground from '../../../components/background/Authbackground';
 import Background from '../../../components/background';
 import moment from 'moment';
-import {ServiceHourContext} from '../../../../App';
 class ScheduleDateTime extends Component {
   static navigationOptions = ({navigation}) => {
     let headerTitle = ' ';
@@ -35,7 +34,6 @@ class ScheduleDateTime extends Component {
     };
   };
 
-  static contextType = ServiceHourContext;
 
   constructor(props) {
     super(props);
@@ -76,7 +74,6 @@ class ScheduleDateTime extends Component {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {timeSlot, dateSlot, distanceDays = 4, loading} = nextProps;
-    // const {totalHours} = this.context;
     let totalHours = this.state.totalHours;
 
     const hoursToDays = hours => {
@@ -156,7 +153,6 @@ class ScheduleDateTime extends Component {
     // console.log(moment(this.state.pickupTime.split("-")[0], 'hh:mm A').format('HH'));
     // console.log(moment(this.state.deliveryTime.split("-")[0], 'hh:mm A').format('HH'));
 
-    // const {totalHours} = this.context;
     let totalHours = this.state.totalHours;
     const {deliveryTime, pickupTime, delivery, pickup} = this.state;
     const {timeSlot = []} = this.props;
@@ -244,7 +240,6 @@ class ScheduleDateTime extends Component {
   };
 
   renderDateItem = async (item, MainKey, index) => {
-    // const {totalHours} = this.context;
     let totalHours = this.state.totalHours;
     const selected = this.state[MainKey] || {};
     const {dateSlot = [], distanceDays = 3} = this.props;
@@ -457,7 +452,6 @@ class ScheduleDateTime extends Component {
   render() {
     const {timeSlot = [], dateSlot = [], loading, LngCode} = this.props;
     const {pickup, delivery, note} = this.state;
-    // const {totalHours} = this.context;
     let totalHours = this.state.totalHours;
     // let time = this.getCurrentTime();
 
